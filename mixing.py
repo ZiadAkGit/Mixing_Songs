@@ -33,8 +33,8 @@ def process_directory(directory, output_directory, bpm_tolerance, crossfade_dura
         song2 = song_list[i]
         bpm1 = calculate_bpm(song1)
         bpm2 = calculate_bpm(song2)
-        print(f"BPM of {song1.split('/')[-1]} is: ~{int(bpm1)}")
-        print(f"BPM of {song2.split('/')[-1]} is: ~{int(bpm2)}")
+        print(f"BPM of {song1} is: ~{bpm1}")
+        print(f"BPM of {song2} is: ~{bpm2}")
         if abs(bpm1 - bpm2) <= bpm_tolerance:
             print("BPM Match - combining songs")
             output_temp_file = os.path.join(output_directory, f'temp_{i}.mp3')
