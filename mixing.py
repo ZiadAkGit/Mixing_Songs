@@ -3,6 +3,20 @@ import librosa
 import os
 import random
 import ignore as ig
+import requests
+from bs4 import BeautifulSoup
+
+def get_songs():
+    r = requests.get("https://www.billboard.com/charts/tiktok-billboard-top-50/")
+    soup = BeautifulSoup(r.text, "html.parser")
+    testData = soup.select('[class*="c-title a-no-trucate a-font-primary-bold-s"]')
+    counter = 1
+    data = ""
+    for i in testData:
+        song = i.text.strip()
+        data += f'{counter}. {song}\n'
+        counter += 1
+    return data
 
 
 def calculate_bpm(audio_file):
@@ -43,11 +57,14 @@ def process_directory(directory, output_directory, bpm_tolerance, crossfade_dura
             temp_output = output_temp_file
         else:
             print(f"Skipped combining: {song1} and {song2} due to BPM difference")
+    print("Deleting all temp files...")
     os.rename(temp_output, output_file)
     for i in os.listdir(output_directory):
         if i.__contains__('temp_'):
             os.remove(f'{output_directory}\\{i}')
-    print(f"Mix created successfully: {output_file}\nAll temp files were deleted!")
+    print(f"Mix created successfully!!\nOutput file: {output_file}")
 
 
-process_directory(ig.input_dir, ig.output_dir, bpm_tolerance=25, crossfade_duration=6, genre_chosen=ig.genre)
+print(get_songs())
+process_directory(ig.input_dir, ig.output_dir, bpm_tolerance=25, crossfade_duration=4, genre_chosen=ig.genre)
+
