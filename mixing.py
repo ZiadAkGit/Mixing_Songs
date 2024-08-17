@@ -2,6 +2,7 @@ import subprocess
 import librosa
 import os
 import random
+import ignore as ig
 
 
 def calculate_bpm(audio_file):
@@ -18,22 +19,22 @@ def crossfade_audio(first_file, second_file, output_file_path, crossfade_duratio
     subprocess.run(command, check=True, stdout=subprocess.DEVNULL, stderr = subprocess.DEVNULL)
 
 
-def process_directory(directory, output_directory, bpm_tolerance, crossfade_duration):
+def process_directory(directory, output_directory, bpm_tolerance, crossfade_duration,genre_chosen):
     print("Starting to search for songs!")
     song_list = [os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.mp3')]
     random.shuffle(song_list)  # Shuffle the list to be random
     if not os.path.exists(output_directory):
         print("Creating the final directory!")
         os.makedirs(output_directory)
-    output_file = os.path.join(output_directory, 'final_mix.mp3')
+    output_file = os.path.join(output_directory, f'{genre_chosen}_final_mix.mp3')
     temp_output = song_list[0]
     for i in range(1, len(song_list)):
         song1 = temp_output
         song2 = song_list[i]
         bpm1 = calculate_bpm(song1)
         bpm2 = calculate_bpm(song2)
-        print(f"BPM of {song1} is: ~{int(bpm1)}")
-        print(f"BPM of {song2} is: ~{int(bpm2)}")
+        print(f"BPM of {song1.split('/')[-1]} is: ~{int(bpm1)}")
+        print(f"BPM of {song2.split('/')[-1]} is: ~{int(bpm2)}")
         if abs(bpm1 - bpm2) <= bpm_tolerance:
             print("BPM Match - combining songs")
             output_temp_file = os.path.join(output_directory, f'temp_{i}.mp3')
@@ -48,6 +49,4 @@ def process_directory(directory, output_directory, bpm_tolerance, crossfade_dura
     print(f"Mix created successfully: {output_file}\nAll temp files were deleted!")
 
 
-input_dir = 'C:\\Users\\ziada\\Downloads\\Tracks\\Afrohouse'
-output_dir = 'C:\\Users\\ziada\\Downloads\\Tracks\\final'
-process_directory(input_dir, output_dir, bpm_tolerance=25, crossfade_duration=6)
+process_directory(ig.input_dir, ig.output_dir, bpm_tolerance=25, crossfade_duration=6, genre_chosen=ig.genre)
